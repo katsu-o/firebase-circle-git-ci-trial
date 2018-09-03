@@ -53,5 +53,5 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               # ~/.yarn/bin/firebase use dev
-              ~/.yarn/bin/firebase firebase deploy --token=$FIREBASE_TOKEN
+              ~/.yarn/bin/firebase deploy --token=$FIREBASE_TOKEN
             fi
