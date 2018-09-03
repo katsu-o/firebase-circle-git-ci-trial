@@ -7,7 +7,6 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      # - image: circleci/node:7.10
       - image: circleci/node:10.7.0
 
       # Specify service dependencies here if necessary
@@ -27,17 +26,32 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run:
+          name: Install NPM modules
+          command: |
+            yarn global add firebase-tools
+            yarn install
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # run tests!
-      - run: CI=true yarn test
+      # Build
+      - run:
+          name: Build
+          command: yarn build
 
-      # deploy
-      - deploy
-        branch: master
-        command: firebase deploy --token $FIREBASE_TOKEN
+      # Test
+      - run:
+          name: Test
+          command: CI=true yarn test
+
+      # Deploy
+      - run:
+          name: Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              # firebase use dev
+              firebase deploy --token=$FIREBASE_TOKEN
+            fi
